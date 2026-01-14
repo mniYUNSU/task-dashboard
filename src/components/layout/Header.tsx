@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useSyncExternalStore } from 'react';
 import { useTheme } from 'next-themes';
@@ -22,9 +23,13 @@ export function Header() {
     <Card className='rounded-none border-x-0 border-t-0'>
       <CardContent className='mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4'>
         <div className='flex items-center gap-3'>
-          <div className='flex h-9 w-9 items-center justify-center rounded-md bg-primary text-xs font-semibold text-primary-foreground'>
-            タ
-          </div>
+          <Image
+            src='/brand/icon.jpg'
+            alt='みんなのタスク管理'
+            width={36}
+            height={36}
+            className='rounded-md'
+          />
           <div>
             <p className='text-xs uppercase tracking-wide text-primary/80'>
               みんなのタスク管理
