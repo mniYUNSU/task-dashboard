@@ -35,7 +35,8 @@ const categoryLabels: Record<string, string> = {
 
 type TaskFormProps = {
   selectedTask: Task | null;
-  onClearSelection: () => void;
+  onSuccess: () => void;
+  onCancel?: () => void;
 };
 
 type TaskFormState = {
@@ -43,6 +44,8 @@ type TaskFormState = {
   category: string;
   priority: Priority;
   isCompleted: boolean;
+  description: string;
+  dueDate: number | null;
 };
 
 const defaultState: TaskFormState = {
@@ -50,9 +53,34 @@ const defaultState: TaskFormState = {
   category: defaultCategories[0],
   priority: "medium",
   isCompleted: false,
+  description: "",
+  dueDate: null,
 };
 
-export function TaskForm({ selectedTask, onClearSelection }: TaskFormProps) {
+function formatDateInputValue(timestamp: number | null) {
+  if (!timestamp) {
+    return "";
+  }
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function toEndOfDayTimestamp(value: string) {
+  if (!value) {
+    return null;
+  }
+  const date = new Date(`${value}T23:59:59.999`);
+  return Number.isNaN(date.getTime()) ? null : date.getTime();
+}
+
+export function TaskForm({
+  selectedTask,
+  onSuccess,
+  onCancel,
+}: TaskFormProps) {
   const { addTask, editTask } = useTasks();
   const initialState: TaskFormState = selectedTask
     ? {
@@ -60,6 +88,8 @@ export function TaskForm({ selectedTask, onClearSelection }: TaskFormProps) {
         category: selectedTask.category,
         priority: selectedTask.priority,
         isCompleted: selectedTask.isCompleted,
+        description: selectedTask.description ?? "",
+        dueDate: selectedTask.dueDate ?? null,
       }
     : defaultState;
   const [form, setForm] = useState<TaskFormState>(initialState);
@@ -91,8 +121,10 @@ export function TaskForm({ selectedTask, onClearSelection }: TaskFormProps) {
         category: form.category,
         priority: form.priority,
         isCompleted: form.isCompleted,
+        description: form.description,
+        dueDate: form.dueDate,
       });
-      onClearSelection();
+      onSuccess();
       return;
     }
 
@@ -101,9 +133,12 @@ export function TaskForm({ selectedTask, onClearSelection }: TaskFormProps) {
       category: form.category,
       priority: form.priority,
       isCompleted: form.isCompleted,
+      description: form.description,
+      dueDate: form.dueDate,
     });
     setForm(defaultState);
     setError(null);
+    onSuccess();
   };
 
   return (
@@ -179,6 +214,38 @@ export function TaskForm({ selectedTask, onClearSelection }: TaskFormProps) {
             </div>
           </div>
 
+          <div className="space-y-2">
+            <label className="text-sm font-medium" htmlFor="task-description">
+              説明
+            </label>
+            <textarea
+              id="task-description"
+              className="min-h-[96px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              placeholder="補足や背景を入力"
+              value={form.description}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, description: event.target.value }))
+              }
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium" htmlFor="task-due-date">
+              期限
+            </label>
+            <Input
+              id="task-due-date"
+              type="date"
+              value={formatDateInputValue(form.dueDate)}
+              onChange={(event) =>
+                setForm((prev) => ({
+                  ...prev,
+                  dueDate: toEndOfDayTimestamp(event.target.value),
+                }))
+              }
+            />
+          </div>
+
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
@@ -199,7 +266,7 @@ export function TaskForm({ selectedTask, onClearSelection }: TaskFormProps) {
               {isEditing ? "変更を保存" : "追加する"}
             </Button>
             {isEditing ? (
-              <Button type="button" variant="outline" onClick={onClearSelection}>
+              <Button type="button" variant="outline" onClick={onCancel}>
                 編集をキャンセル
               </Button>
             ) : null}

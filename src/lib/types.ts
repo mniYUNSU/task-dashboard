@@ -27,6 +27,8 @@ export function createNewTask(input: {
   category: string;
   priority: Priority;
   isCompleted?: boolean;
+  description?: string;
+  dueDate?: number | null;
 }): Task {
   const now = Date.now();
 
@@ -36,8 +38,8 @@ export function createNewTask(input: {
     category: input.category,
     priority: input.priority,
     isCompleted: input.isCompleted ?? false,
-    description: "",
-    dueDate: null,
+    description: input.description ?? "",
+    dueDate: input.dueDate ?? null,
     createdAt: now,
     updatedAt: now,
   };

@@ -25,13 +25,13 @@ import type { Task } from "@/lib/types";
 type TaskManagerListProps = {
   tasks: Task[];
   selectedTaskId: string | null;
-  onSelect: (id: string) => void;
+  onEdit: (id: string) => void;
 };
 
 export function TaskManagerList({
   tasks,
   selectedTaskId,
-  onSelect,
+  onEdit,
 }: TaskManagerListProps) {
   const { deleteTask, toggleComplete, isHydrated } = useTasks();
 
@@ -72,7 +72,7 @@ export function TaskManagerList({
                     />
                     完了
                   </label>
-                  <Button size="sm" variant="outline" onClick={() => onSelect(task.id)}>
+                  <Button size="sm" variant="outline" onClick={() => onEdit(task.id)}>
                     編集
                   </Button>
                   <Dialog>

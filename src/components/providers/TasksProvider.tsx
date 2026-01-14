@@ -17,6 +17,8 @@ type TaskInput = {
   category: string;
   priority: Priority;
   isCompleted?: boolean;
+  description?: string;
+  dueDate?: number | null;
 };
 
 type TasksContextValue = {
