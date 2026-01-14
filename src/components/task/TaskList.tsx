@@ -79,7 +79,9 @@ export function TaskList({ tasks, totalCount, isHydrated }: TaskListProps) {
         task={detailTask}
         open={detailOpen}
         onOpenChange={handleDetailOpenChange}
-        onGoToManage={() => router.push("/tasks")}
+        onGoToManage={(taskId) =>
+          router.push(`/tasks?focus=${encodeURIComponent(taskId)}`)
+        }
       />
     </>
   );
