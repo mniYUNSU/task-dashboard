@@ -34,7 +34,6 @@ export function TaskManagerList({
   onSelect,
 }: TaskManagerListProps) {
   const { deleteTask, toggleComplete, isHydrated } = useTasks();
-  const now = isHydrated ? Date.now() : 0;
 
   return (
     <Card className="shadow-sm">
@@ -60,7 +59,7 @@ export function TaskManagerList({
             <TaskCard
               key={task.id}
               task={task}
-              now={now}
+              now={isHydrated ? task.updatedAt : 0}
               highlighted={isSelected}
               actions={
                 <>

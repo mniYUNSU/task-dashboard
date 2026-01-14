@@ -15,8 +15,6 @@ type TaskListProps = {
 };
 
 export function TaskList({ tasks, totalCount, isHydrated }: TaskListProps) {
-  const now = isHydrated ? Date.now() : 0;
-
   return (
     <Card className="shadow-sm">
       <CardHeader>
@@ -43,7 +41,7 @@ export function TaskList({ tasks, totalCount, isHydrated }: TaskListProps) {
         ) : null}
 
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} now={now} />
+          <TaskCard key={task.id} task={task} now={isHydrated ? task.updatedAt : 0} />
         ))}
       </CardContent>
     </Card>
