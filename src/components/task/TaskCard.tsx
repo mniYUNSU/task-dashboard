@@ -11,6 +11,7 @@ type TaskCardProps = {
   highlighted?: boolean;
   actions?: ReactNode;
   onClick?: () => void;
+  domId?: string;
 };
 
 const priorityStyles: Record<string, string> = {
@@ -39,7 +40,8 @@ export function TaskCard({
   now = 0,
   highlighted,
   actions,
-  onClick
+  onClick,
+  domId
 }: TaskCardProps) {
   const categoryColor = getCategoryColor(task.category);
   const priorityLabel =
@@ -78,6 +80,7 @@ export function TaskCard({
       onKeyDown={handleKeyDown}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
+      id={domId}
     >
       <div className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between'>
         <div className='min-w-0 flex-1 space-y-2'>

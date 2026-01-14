@@ -77,6 +77,7 @@ export function TaskManagerList({
                     task={task}
                     now={isHydrated ? task.updatedAt : 0}
                     highlighted={isSelected}
+                    domId={`task-${task.id}`}
                     onClick={() => {
                       setDetailTask(task);
                       setDetailOpen(true);
