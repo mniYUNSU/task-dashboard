@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -246,20 +247,16 @@ export function TaskForm({
             />
           </div>
 
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              className="size-4 rounded border-input accent-primary"
+          <div className="flex items-center gap-2 text-sm">
+            <Switch
               checked={form.isCompleted}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  isCompleted: event.target.checked,
-                }))
+              onCheckedChange={(checked) =>
+                setForm((prev) => ({ ...prev, isCompleted: checked }))
               }
+              aria-label="完了として登録する"
             />
-            完了として登録する
-          </label>
+            <span>完了として登録する</span>
+          </div>
 
           <div className="flex flex-wrap gap-2">
             <Button type="submit">

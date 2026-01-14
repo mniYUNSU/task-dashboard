@@ -19,6 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TaskCard } from "@/components/task/TaskCard";
+import { Switch } from "@/components/ui/switch";
 import { useTasks } from "@/hooks/useTasks";
 import type { Task } from "@/lib/types";
 
@@ -63,15 +64,14 @@ export function TaskManagerList({
               highlighted={isSelected}
               actions={
                 <>
-                  <label className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <input
-                      type="checkbox"
-                      className="size-4 rounded border-input accent-primary"
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Switch
                       checked={task.isCompleted}
-                      onChange={() => toggleComplete(task.id)}
+                      onCheckedChange={() => toggleComplete(task.id)}
+                      aria-label={`${task.title} を完了にする`}
                     />
-                    完了
-                  </label>
+                    <span>完了</span>
+                  </div>
                   <Button size="sm" variant="outline" onClick={() => onEdit(task.id)}>
                     編集
                   </Button>
