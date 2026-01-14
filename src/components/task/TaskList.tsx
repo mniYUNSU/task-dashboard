@@ -40,9 +40,17 @@ export function TaskList({ tasks, totalCount, isHydrated }: TaskListProps) {
           </div>
         ) : null}
 
-        {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} now={isHydrated ? task.updatedAt : 0} />
-        ))}
+        {tasks.length > 0 ? (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                now={isHydrated ? task.updatedAt : 0}
+              />
+            ))}
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   );
