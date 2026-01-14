@@ -6,6 +6,8 @@ import { Progress } from '@/components/ui/progress';
 import {
   getCompletionRate,
   getCountByCategory,
+  getDueSoonTasks,
+  getOverdueTasks,
   getIncompleteCountByPriority
 } from '@/lib/tasks';
 import { defaultCategories, type Task } from '@/lib/types';
@@ -22,6 +24,10 @@ const priorityLabels: Record<string, string> = {
   low: '低'
 };
 
+function formatDateUtc(timestamp: number) {
+  return new Date(timestamp).toISOString().slice(0, 10).replaceAll('-', '/');
+}
+
 type DashboardCardsProps = {
   tasks: Task[];
   isHydrated: boolean;
@@ -31,6 +37,12 @@ export function DashboardCards({ tasks, isHydrated }: DashboardCardsProps) {
   const completionRate = getCompletionRate(tasks);
   const categoryCounts = getCountByCategory(tasks);
   const priorityCounts = getIncompleteCountByPriority(tasks);
+  const now = tasks.reduce(
+    (max, task) => Math.max(max, task.updatedAt, task.createdAt),
+    0
+  );
+  const dueSoonTasks = getDueSoonTasks(tasks, now, 3).slice(0, 5);
+  const overdueTasks = getOverdueTasks(tasks, now);
 
   if (!isHydrated) {
     return (
@@ -148,6 +160,59 @@ export function DashboardCards({ tasks, isHydrated }: DashboardCardsProps) {
               </div>
             );
           })}
+        </CardContent>
+      </Card>
+
+      <Card className='shadow-sm lg:col-span-3'>
+        <CardHeader>
+          <div className='flex flex-wrap items-center justify-between gap-2'>
+            <CardTitle className='text-base'>締切が近いタスク</CardTitle>
+            <Link
+              className='text-xs font-medium text-primary hover:underline'
+              href='/list'
+            >
+              一覧で確認
+            </Link>
+          </div>
+        </CardHeader>
+        <CardContent className='space-y-3'>
+          {dueSoonTasks.length === 0 && overdueTasks.length === 0 ? (
+            <p className='text-sm text-muted-foreground'>
+              期限が近いタスクはありません。
+            </p>
+          ) : null}
+
+          {overdueTasks.map((task) => (
+            <div
+              key={task.id}
+              className='flex items-center justify-between rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm'
+            >
+              <span className='font-medium text-foreground'>{task.title}</span>
+              <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+                <span>
+                  {task.dueDate ? formatDateUtc(task.dueDate) : '期限未設定'}
+                </span>
+                <Badge className='bg-destructive text-white'>期限超過</Badge>
+              </div>
+            </div>
+          ))}
+
+          {dueSoonTasks.map((task) => (
+            <div
+              key={task.id}
+              className='flex items-center justify-between rounded-lg border border-border px-3 py-2 text-sm'
+            >
+              <span className='font-medium text-foreground'>{task.title}</span>
+              <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+                <span>
+                  {task.dueDate ? formatDateUtc(task.dueDate) : '期限未設定'}
+                </span>
+                <Badge className='bg-brand-soft text-brand-soft-foreground'>
+                  期限間近
+                </Badge>
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
     </div>
