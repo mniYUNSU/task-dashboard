@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { TaskCard } from '@/components/task/TaskCard';
 import { TaskDetailDialog } from '@/components/task/TaskDetailDialog';
 import {
   getCompletionRate,
@@ -28,10 +29,6 @@ const priorityLabels: Record<string, string> = {
   medium: '中',
   low: '低'
 };
-
-function formatDateUtc(timestamp: number) {
-  return new Date(timestamp).toISOString().slice(0, 10).replaceAll('-', '/');
-}
 
 type DashboardCardsProps = {
   tasks: Task[];
@@ -204,51 +201,47 @@ export function DashboardCards({ tasks, isHydrated }: DashboardCardsProps) {
               </p>
             ) : null}
 
-            {overdueTasks.map((task) => (
-              <button
-                key={task.id}
-                type='button'
-                className='flex w-full items-center justify-between rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-left text-sm transition-colors hover:border-destructive/60 cursor-pointer'
-                onClick={() => {
-                  setDetailTask(task);
-                  setDetailOpen(true);
-                }}
-              >
-                <span className='font-medium text-foreground line-clamp-1'>
-                  {task.title}
-                </span>
-                <div className='flex shrink-0 items-center gap-2 text-xs text-muted-foreground'>
-                  <span>
-                    {task.dueDate ? formatDateUtc(task.dueDate) : '期限未設定'}
-                  </span>
-                  <Badge className='bg-destructive text-white'>期限超過</Badge>
+            {overdueTasks.length > 0 ? (
+              <div className='space-y-2'>
+                <p className='text-xs font-semibold text-destructive'>
+                  期限超過
+                </p>
+                <div className='grid gap-3 sm:grid-cols-2'>
+                  {overdueTasks.map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      now={now}
+                      onClick={() => {
+                        setDetailTask(task);
+                        setDetailOpen(true);
+                      }}
+                    />
+                  ))}
                 </div>
-              </button>
-            ))}
+              </div>
+            ) : null}
 
-            {dueSoonTasks.map((task) => (
-              <button
-                key={task.id}
-                type='button'
-                className='flex w-full items-center justify-between rounded-lg border border-border px-3 py-2 text-left text-sm transition-colors hover:border-primary/40 cursor-pointer'
-                onClick={() => {
-                  setDetailTask(task);
-                  setDetailOpen(true);
-                }}
-              >
-                <span className='font-medium text-foreground line-clamp-1'>
-                  {task.title}
-                </span>
-                <div className='flex shrink-0 items-center gap-2 text-xs text-muted-foreground'>
-                  <span>
-                    {task.dueDate ? formatDateUtc(task.dueDate) : '期限未設定'}
-                  </span>
-                  <Badge className='bg-brand-soft text-brand-soft-foreground'>
-                    期限間近
-                  </Badge>
+            {dueSoonTasks.length > 0 ? (
+              <div className='space-y-2'>
+                <p className='text-xs font-semibold text-amber-700 dark:text-amber-200'>
+                  期限間近
+                </p>
+                <div className='grid gap-3 sm:grid-cols-2'>
+                  {dueSoonTasks.map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      now={now}
+                      onClick={() => {
+                        setDetailTask(task);
+                        setDetailOpen(true);
+                      }}
+                    />
+                  ))}
                 </div>
-              </button>
-            ))}
+              </div>
+            ) : null}
           </CardContent>
         </Card>
       </div>
