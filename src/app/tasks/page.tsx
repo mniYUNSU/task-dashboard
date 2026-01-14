@@ -73,7 +73,7 @@ export default function TasksPage() {
                   <SelectItem value="low">低</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="secondary">保存（仮）</Button>
+              <Button variant="outline">保存（仮）</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -94,7 +94,7 @@ export default function TasksPage() {
             <div className="space-y-2">
               <p className="text-sm font-medium">タスク行の仮表示</p>
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                <Badge variant="secondary">高</Badge>
+                <Badge>高</Badge>
                 <span>業務</span>
                 <span>未着手</span>
               </div>

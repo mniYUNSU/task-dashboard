@@ -12,7 +12,7 @@ export function Header() {
             タ
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs uppercase tracking-wide text-primary/80">
               タスク管理
             </p>
             <p className="text-lg font-semibold">タスク管理ダッシュボード</p>
