@@ -206,7 +206,7 @@ export function DashboardCards({ tasks, isHydrated }: DashboardCardsProps) {
                 <p className='text-xs font-semibold text-destructive'>
                   期限超過
                 </p>
-                <div className='grid gap-3 sm:grid-cols-2'>
+                <div className='grid w-full max-w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-2'>
                   {overdueTasks.map((task) => (
                     <TaskCard
                       key={task.id}
@@ -227,7 +227,7 @@ export function DashboardCards({ tasks, isHydrated }: DashboardCardsProps) {
                 <p className='text-xs font-semibold text-amber-700 dark:text-amber-200'>
                   期限間近
                 </p>
-                <div className='grid gap-3 sm:grid-cols-2'>
+                <div className='grid w-full max-w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-2'>
                   {dueSoonTasks.map((task) => (
                     <TaskCard
                       key={task.id}

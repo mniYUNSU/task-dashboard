@@ -82,9 +82,9 @@ export function TaskDetailDialog({
           <DialogTitle>タスク詳細</DialogTitle>
         </DialogHeader>
         {task ? (
-          <div className='space-y-4 text-sm'>
+          <div className='space-y-4 text-sm min-w-0 flex-1'>
             <div className='space-y-2'>
-              <p className='text-base font-semibold text-foreground'>
+              <p className='text-base font-semibold text-foreground line-clamp-2 wrap-break-word'>
                 {task.title}
               </p>
               <div className='flex flex-wrap items-center gap-2 text-xs'>
@@ -137,7 +137,7 @@ export function TaskDetailDialog({
 
             <div className='rounded-md border border-border bg-background p-3'>
               <p className='text-xs font-medium text-muted-foreground'>説明</p>
-              <p className='mt-2 whitespace-pre-wrap text-sm text-foreground'>
+              <p className='mt-2 whitespace-pre-wrap text-sm text-foreground line-clamp-4 wrap-break-word'>
                 {task.description?.trim() || '説明は未登録です。'}
               </p>
             </div>

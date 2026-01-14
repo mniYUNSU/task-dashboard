@@ -72,7 +72,7 @@ export function TaskCard({
   return (
     <div
       className={cn(
-        'w-full rounded-lg border p-4 shadow-sm',
+        'w-full max-w-full min-w-0 overflow-hidden rounded-lg border p-4 shadow-sm',
         categoryColor.cardBg,
         categoryColor.cardBorder,
         highlighted && 'border-primary/50 ring-2 ring-primary/20',
@@ -84,7 +84,7 @@ export function TaskCard({
       tabIndex={onClick ? 0 : undefined}
       id={domId}
     >
-      <div className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between'>
+      <div className='grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-3'>
         <div className='min-w-0 flex-1 space-y-2'>
           <div className='text-sm font-semibold leading-relaxed text-foreground truncate'>
             {task.title}
@@ -111,7 +111,7 @@ export function TaskCard({
               {task.isCompleted ? '完了' : '未完了'}
             </Badge>
           </div>
-          <p className='text-xs text-muted-foreground line-clamp-2'>
+          <p className='text-xs text-muted-foreground line-clamp-2 wrap-break-word'>
             {description || '説明は未登録です。'}
           </p>
           <div className='flex flex-wrap items-center gap-3 text-xs text-muted-foreground'>
@@ -126,7 +126,7 @@ export function TaskCard({
         </div>
         {actions ? (
           <div
-            className='flex shrink-0 flex-wrap items-center gap-2'
+            className='flex flex-col items-end gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-end'
             onClick={(event) => event.stopPropagation()}
           >
             {actions}
