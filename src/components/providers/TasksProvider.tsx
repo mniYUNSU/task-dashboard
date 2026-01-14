@@ -1,16 +1,19 @@
-"use client";
+'use client';
 
 import {
   createContext,
   useCallback,
   useMemo,
   useSyncExternalStore,
-  type ReactNode,
-} from "react";
+  type ReactNode
+} from 'react';
 
-import { loadTasks, saveTasks } from "@/lib/storage";
-import { createNewTask, updateTask } from "@/lib/types";
-import type { Priority, Task } from "@/lib/types";
+import { CheckCircle2, PencilLine, RotateCcw, Trash2 } from 'lucide-react';
+
+import { toast } from '@/components/ui/use-toast';
+import { loadTasks, saveTasks } from '@/lib/storage';
+import { createNewTask, updateTask } from '@/lib/types';
+import type { Priority, Task } from '@/lib/types';
 
 type TaskInput = {
   title: string;
@@ -25,7 +28,10 @@ type TasksContextValue = {
   tasks: Task[];
   isHydrated: boolean;
   addTask: (input: TaskInput) => void;
-  editTask: (id: string, patch: Partial<Omit<Task, "id" | "createdAt">>) => void;
+  editTask: (
+    id: string,
+    patch: Partial<Omit<Task, 'id' | 'createdAt'>>
+  ) => void;
   deleteTask: (id: string) => void;
   toggleComplete: (id: string) => void;
 };
@@ -44,7 +50,7 @@ let taskCache: Task[] = emptyTasks;
 let isHydrated = false;
 const hydrationListeners = new Set<() => void>();
 
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   taskCache = loadTasks();
 }
 
@@ -69,7 +75,7 @@ function subscribe(listener: () => void) {
 
 function subscribeHydration(listener: () => void) {
   hydrationListeners.add(listener);
-  if (!isHydrated && typeof window !== "undefined") {
+  if (!isHydrated && typeof window !== 'undefined') {
     isHydrated = true;
     queueMicrotask(emitHydrationChange);
   }
@@ -111,14 +117,22 @@ export function TasksProvider({ children }: TasksProviderProps) {
   const addTask = useCallback((input: TaskInput) => {
     const next = [...getSnapshot(), createNewTask(input)];
     setTaskCache(next);
+    toast({
+      title: 'タスクを追加しました。',
+      icon: <CheckCircle2 className='size-4 text-emerald-600' />
+    });
   }, []);
 
   const editTask = useCallback(
-    (id: string, patch: Partial<Omit<Task, "id" | "createdAt">>) => {
+    (id: string, patch: Partial<Omit<Task, 'id' | 'createdAt'>>) => {
       const next = getSnapshot().map((task) =>
         task.id === id ? updateTask(task, patch) : task
       );
       setTaskCache(next);
+      toast({
+        title: 'タスクを更新しました。',
+        icon: <PencilLine className='size-4 text-sky-600' />
+      });
     },
     []
   );
@@ -126,15 +140,33 @@ export function TasksProvider({ children }: TasksProviderProps) {
   const deleteTask = useCallback((id: string) => {
     const next = getSnapshot().filter((task) => task.id !== id);
     setTaskCache(next);
+    toast({
+      title: 'タスクを削除しました。',
+      variant: 'destructive',
+      icon: <Trash2 className='size-4 text-white' />
+    });
   }, []);
 
   const toggleComplete = useCallback((id: string) => {
+    const current = getSnapshot().find((task) => task.id === id);
     const next = getSnapshot().map((task) =>
       task.id === id
         ? updateTask(task, { isCompleted: !task.isCompleted })
         : task
     );
     setTaskCache(next);
+    if (current) {
+      toast({
+        title: current.isCompleted
+          ? '未完了に戻しました。'
+          : '完了にしました。',
+        icon: current.isCompleted ? (
+          <RotateCcw className='size-4 text-amber-600' />
+        ) : (
+          <CheckCircle2 className='size-4 text-emerald-600' />
+        )
+      });
+    }
   }, []);
 
   const value = useMemo(
@@ -144,7 +176,7 @@ export function TasksProvider({ children }: TasksProviderProps) {
       addTask,
       editTask,
       deleteTask,
-      toggleComplete,
+      toggleComplete
     }),
     [tasks, hydrated, addTask, editTask, deleteTask, toggleComplete]
   );
