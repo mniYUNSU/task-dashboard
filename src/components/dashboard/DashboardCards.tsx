@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { TaskCard } from '@/components/task/TaskCard';
 import { TaskDetailDialog } from '@/components/task/TaskDetailDialog';
+import { getCategoryLabel } from '@/lib/labels';
 import {
   getCompletionRate,
   getCountByCategory,
@@ -17,12 +18,6 @@ import {
   getIncompleteCountByPriority
 } from '@/lib/tasks';
 import { defaultCategories, type Task } from '@/lib/types';
-
-const categoryLabels: Record<string, string> = {
-  Work: '業務',
-  Personal: '個人',
-  Study: '学習'
-};
 
 const priorityLabels: Record<string, string> = {
   high: '高',
@@ -126,7 +121,7 @@ export function DashboardCards({ tasks, isHydrated }: DashboardCardsProps) {
                 <div key={category} className='space-y-2'>
                   <div className='flex items-center justify-between text-sm'>
                     <span className='text-muted-foreground'>
-                      {categoryLabels[category] ?? category}
+                      {getCategoryLabel(category)}
                     </span>
                     <span className='font-semibold text-foreground'>
                       {count}

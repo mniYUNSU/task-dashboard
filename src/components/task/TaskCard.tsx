@@ -1,8 +1,10 @@
 import type { KeyboardEvent, ReactNode } from 'react';
 
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { getCategoryLabel } from '@/lib/labels';
 import { getCategoryColor, isDueSoon, isOverdue } from '@/lib/tasks';
+import { formatDateUtc } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import type { Task } from '@/lib/types';
 
 type TaskCardProps = {
@@ -24,16 +26,6 @@ const statusStyles: Record<string, string> = {
   completed: 'bg-emerald-100 text-emerald-700 border-emerald-200',
   incomplete: 'bg-slate-100 text-slate-700 border-slate-200'
 };
-
-const categoryLabels: Record<string, string> = {
-  Work: '業務',
-  Personal: '個人',
-  Study: '学習'
-};
-
-function formatDateUtc(timestamp: number) {
-  return new Date(timestamp).toISOString().slice(0, 10).replaceAll('-', '/');
-}
 
 export function TaskCard({
   task,
@@ -99,7 +91,7 @@ export function TaskCard({
                 categoryColor.border
               )}
             >
-              {categoryLabels[task.category] ?? task.category}
+              {getCategoryLabel(task.category)}
             </Badge>
             <Badge className={priorityStyles[task.priority] ?? 'bg-muted'}>
               {priorityLabel}

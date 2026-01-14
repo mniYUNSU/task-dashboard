@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { defaultCategories } from '@/lib/types';
+import { getCategoryLabel } from '@/lib/labels';
 
 export type TaskFilterStatus = 'all' | 'completed' | 'incomplete';
 export type TaskSortKey = 'newest' | 'priority' | 'incomplete';
@@ -23,12 +24,6 @@ type TaskFiltersProps = {
   onStatusChange: (value: TaskFilterStatus) => void;
   onQueryChange: (value: string) => void;
   onSortChange: (value: TaskSortKey) => void;
-};
-
-const categoryLabels: Record<string, string> = {
-  Work: '業務',
-  Personal: '個人',
-  Study: '学習'
 };
 
 export function TaskFilters({
@@ -76,7 +71,7 @@ export function TaskFilters({
               <SelectItem value='all'>すべて</SelectItem>
               {defaultCategories.map((categoryItem) => (
                 <SelectItem key={categoryItem} value={categoryItem}>
-                  {categoryLabels[categoryItem] ?? categoryItem}
+                  {getCategoryLabel(categoryItem)}
                 </SelectItem>
               ))}
             </SelectContent>

@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTasks } from "@/hooks/useTasks";
+import { getCategoryLabel } from "@/lib/labels";
 import { defaultCategories, type Priority, type Task } from "@/lib/types";
 
 const priorityOptions: Array<{ value: Priority; label: string }> = [
@@ -27,12 +28,6 @@ const priorityOptions: Array<{ value: Priority; label: string }> = [
   { value: "medium", label: "中" },
   { value: "low", label: "低" },
 ];
-
-const categoryLabels: Record<string, string> = {
-  Work: "業務",
-  Personal: "個人",
-  Study: "学習",
-};
 
 type TaskFormProps = {
   selectedTask: Task | null;
@@ -102,7 +97,7 @@ export function TaskForm({
     () =>
       defaultCategories.map((category) => ({
         value: category,
-        label: categoryLabels[category] ?? category,
+        label: getCategoryLabel(category),
       })),
     []
   );
