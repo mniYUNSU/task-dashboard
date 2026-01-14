@@ -18,8 +18,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'タスク管理ダッシュボード',
-  description: 'フロントエンドのタスク管理アプリ'
+  title: {
+    default: 'みんなのタスク管理',
+    template: '%s | みんなのタスク管理'
+  },
+  description: 'シンプルで使いやすいタスク管理アプリです。'
 };
 
 export default function RootLayout({
