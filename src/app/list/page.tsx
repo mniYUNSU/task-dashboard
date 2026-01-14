@@ -13,40 +13,40 @@ export default function TaskListPage() {
   return (
     <section className="space-y-6">
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold">Task List</h1>
+        <h1 className="text-2xl font-semibold">タスク一覧</h1>
         <p className="text-sm text-muted-foreground">
-          Filter and search tasks across all categories.
+          カテゴリ別に絞り込み、タイトルで検索できます。
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Filters</CardTitle>
+          <CardTitle className="text-base">フィルター</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-3 md:grid-cols-2">
-            <Input placeholder="Search by title" />
+            <Input placeholder="タイトルで検索" />
             <Select>
               <SelectTrigger>
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder="カテゴリ" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All categories</SelectItem>
-                <SelectItem value="work">Work</SelectItem>
-                <SelectItem value="personal">Personal</SelectItem>
-                <SelectItem value="study">Study</SelectItem>
+                <SelectItem value="all">すべて</SelectItem>
+                <SelectItem value="work">業務</SelectItem>
+                <SelectItem value="personal">個人</SelectItem>
+                <SelectItem value="study">学習</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <Tabs defaultValue="all" className="space-y-3">
             <TabsList>
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
-              <TabsTrigger value="incomplete">Incomplete</TabsTrigger>
+              <TabsTrigger value="all">すべて</TabsTrigger>
+              <TabsTrigger value="completed">完了</TabsTrigger>
+              <TabsTrigger value="incomplete">未完了</TabsTrigger>
             </TabsList>
             <TabsContent value="all" className="rounded-lg border border-dashed p-4">
               <p className="text-sm text-muted-foreground">
-                Task list placeholder. Results will render here.
+                タスク一覧の仮表示です。結果はここに表示されます。
               </p>
             </TabsContent>
             <TabsContent
@@ -54,7 +54,7 @@ export default function TaskListPage() {
               className="rounded-lg border border-dashed p-4"
             >
               <p className="text-sm text-muted-foreground">
-                Completed task results placeholder.
+                完了タスクの結果（仮表示）です。
               </p>
             </TabsContent>
             <TabsContent
@@ -62,7 +62,7 @@ export default function TaskListPage() {
               className="rounded-lg border border-dashed p-4"
             >
               <p className="text-sm text-muted-foreground">
-                Incomplete task results placeholder.
+                未完了タスクの結果（仮表示）です。
               </p>
             </TabsContent>
           </Tabs>

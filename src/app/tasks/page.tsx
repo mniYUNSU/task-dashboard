@@ -35,45 +35,45 @@ export default function TasksPage() {
     <section className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold">Task Management</h1>
+          <h1 className="text-2xl font-semibold">タスク管理</h1>
           <p className="text-sm text-muted-foreground">
-            Create, edit, and organize tasks from this workspace.
+            この画面でタスクの作成・編集・整理を行います。
           </p>
         </div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button>New Task</Button>
+            <Button>タスクを追加</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Create task</DialogTitle>
+              <DialogTitle>タスクを作成</DialogTitle>
               <DialogDescription>
-                Placeholder form for task creation.
+                タスク作成フォームの仮置きです。
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-3">
-              <Input placeholder="Task title" />
+              <Input placeholder="タスク名" />
               <Select>
                 <SelectTrigger>
-                  <SelectValue placeholder="Category" />
+                  <SelectValue placeholder="カテゴリ" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="work">Work</SelectItem>
-                  <SelectItem value="personal">Personal</SelectItem>
-                  <SelectItem value="study">Study</SelectItem>
+                  <SelectItem value="work">業務</SelectItem>
+                  <SelectItem value="personal">個人</SelectItem>
+                  <SelectItem value="study">学習</SelectItem>
                 </SelectContent>
               </Select>
               <Select>
                 <SelectTrigger>
-                  <SelectValue placeholder="Priority" />
+                  <SelectValue placeholder="優先度" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="high">高</SelectItem>
+                  <SelectItem value="medium">中</SelectItem>
+                  <SelectItem value="low">低</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="secondary">Save (placeholder)</Button>
+              <Button variant="secondary">保存（仮）</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -81,33 +81,33 @@ export default function TasksPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Tasks</CardTitle>
+          <CardTitle>タスク</CardTitle>
           <CardDescription>
-            Task rows will render here once local data is wired up.
+            ローカルデータが連携されると、ここにタスクが表示されます。
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-            No tasks yet. Use the button above to add your first task.
+            まだタスクがありません。上のボタンから追加してください。
           </div>
           <div className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-2">
-              <p className="text-sm font-medium">Task row placeholder</p>
+              <p className="text-sm font-medium">タスク行の仮表示</p>
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                <Badge variant="secondary">High</Badge>
-                <span>Work</span>
-                <span>Not started</span>
+                <Badge variant="secondary">高</Badge>
+                <span>業務</span>
+                <span>未着手</span>
               </div>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size="sm" variant="ghost">
-                  Actions
+                  操作
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem>Delete</DropdownMenuItem>
+                <DropdownMenuItem>編集</DropdownMenuItem>
+                <DropdownMenuItem>削除</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
