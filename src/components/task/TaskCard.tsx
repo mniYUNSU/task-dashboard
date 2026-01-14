@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -10,6 +10,7 @@ type TaskCardProps = {
   now?: number;
   highlighted?: boolean;
   actions?: ReactNode;
+  onClick?: () => void;
 };
 
 const priorityStyles: Record<string, string> = {
@@ -37,7 +38,8 @@ export function TaskCard({
   task,
   now = 0,
   highlighted,
-  actions
+  actions,
+  onClick
 }: TaskCardProps) {
   const categoryColor = getCategoryColor(task.category);
   const priorityLabel =
@@ -55,18 +57,33 @@ export function TaskCard({
     ? 'text-primary'
     : 'text-muted-foreground';
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!onClick) {
+      return;
+    }
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <div
       className={cn(
         'w-full rounded-lg border bg-card p-4 shadow-sm',
-        highlighted && 'border-primary/50 bg-brand-soft/40'
+        highlighted && 'border-primary/50 bg-brand-soft/40',
+        onClick && 'cursor-pointer transition-colors hover:border-primary/40'
       )}
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
     >
       <div className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between'>
-        <div className='space-y-2'>
-          <p className='text-sm font-semibold leading-relaxed text-foreground line-clamp-1'>
+        <div className='min-w-0 flex-1 space-y-2'>
+          <div className='text-sm font-semibold leading-relaxed text-foreground truncate'>
             {task.title}
-          </p>
+          </div>
           <div className='flex flex-wrap items-center gap-2 text-xs'>
             <Badge
               variant='outline'
@@ -96,14 +113,19 @@ export function TaskCard({
             <span>作成: {formatDateUtc(task.createdAt)}</span>
             <span>更新: {formatDateUtc(task.updatedAt)}</span>
             {dueLabel ? (
-              <span className={cn('font-medium', dueClassName)}>
+              <span className={cn('font-bold', dueClassName)}>
                 期限: {dueLabel}
               </span>
             ) : null}
           </div>
         </div>
         {actions ? (
-          <div className='flex flex-wrap items-center gap-2'>{actions}</div>
+          <div
+            className='flex shrink-0 flex-wrap items-center gap-2'
+            onClick={(event) => event.stopPropagation()}
+          >
+            {actions}
+          </div>
         ) : null}
       </div>
     </div>

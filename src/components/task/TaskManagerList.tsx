@@ -1,13 +1,15 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  CardTitle
+} from '@/components/ui/card';
 import {
   Dialog,
   DialogClose,
@@ -16,12 +18,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { TaskCard } from "@/components/task/TaskCard";
-import { Switch } from "@/components/ui/switch";
-import { useTasks } from "@/hooks/useTasks";
-import type { Task } from "@/lib/types";
+  DialogTrigger
+} from '@/components/ui/dialog';
+import { TaskCard } from '@/components/task/TaskCard';
+import { TaskDetailDialog } from '@/components/task/TaskDetailDialog';
+import { Switch } from '@/components/ui/switch';
+import { useTasks } from '@/hooks/useTasks';
+import type { Task } from '@/lib/types';
 
 type TaskManagerListProps = {
   tasks: Task[];
@@ -32,94 +35,117 @@ type TaskManagerListProps = {
 export function TaskManagerList({
   tasks,
   selectedTaskId,
-  onEdit,
+  onEdit
 }: TaskManagerListProps) {
   const { deleteTask, toggleComplete, isHydrated } = useTasks();
+  const [detailTask, setDetailTask] = useState<Task | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+
+  const handleDetailOpenChange = (open: boolean) => {
+    setDetailOpen(open);
+    if (!open) {
+      setDetailTask(null);
+    }
+  };
 
   return (
-    <Card className="shadow-sm">
-      <CardHeader>
-        <CardTitle className="text-base">タスク一覧</CardTitle>
-        <CardDescription>登録済みのタスクを管理できます。</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {!isHydrated ? (
-          <div className="rounded-lg border border-dashed bg-background p-4 text-sm text-muted-foreground">
-            読み込み中...
-          </div>
-        ) : tasks.length === 0 ? (
-          <div className="rounded-lg border border-dashed bg-background p-4 text-sm text-muted-foreground">
-            まだタスクがありません。フォームから追加してください。
-          </div>
-        ) : null}
+    <>
+      <Card className='shadow-sm'>
+        <CardHeader>
+          <CardTitle className='text-base'>タスク一覧</CardTitle>
+          <CardDescription>登録済みのタスクを管理できます。</CardDescription>
+        </CardHeader>
+        <CardContent className='space-y-3'>
+          {!isHydrated ? (
+            <div className='rounded-lg border border-dashed bg-background p-4 text-sm text-muted-foreground'>
+              読み込み中...
+            </div>
+          ) : tasks.length === 0 ? (
+            <div className='rounded-lg border border-dashed bg-background p-4 text-sm text-muted-foreground'>
+              まだタスクがありません。フォームから追加してください。
+            </div>
+          ) : null}
 
-        {tasks.length > 0 ? (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {tasks.map((task) => {
-              const isSelected = selectedTaskId === task.id;
+          {tasks.length > 0 ? (
+            <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
+              {tasks.map((task) => {
+                const isSelected = selectedTaskId === task.id;
 
-              return (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  now={isHydrated ? task.updatedAt : 0}
-                  highlighted={isSelected}
-                  actions={
-                    <>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Switch
-                          checked={task.isCompleted}
-                          onCheckedChange={() => toggleComplete(task.id)}
-                          aria-label={`${task.title} を完了にする`}
-                        />
-                        <span>完了</span>
+                return (
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    now={isHydrated ? task.updatedAt : 0}
+                    highlighted={isSelected}
+                    onClick={() => {
+                      setDetailTask(task);
+                      setDetailOpen(true);
+                    }}
+                    actions={
+                      <div className='flex flex-col gap-1 p-1'>
+                        <div className='flex items-center gap-2 text-sm text-muted-foreground justify-center'>
+                          <Switch
+                            checked={task.isCompleted}
+                            onCheckedChange={() => toggleComplete(task.id)}
+                            aria-label={`${task.title} を完了にする`}
+                            className='cursor-pointer'
+                          />
+                          <span className='flex w-full'>完了</span>
+                        </div>
+                        <Button
+                          size='sm'
+                          variant='outline'
+                          onClick={() => onEdit(task.id)}
+                        >
+                          編集
+                        </Button>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button size='sm' variant='ghost'>
+                              削除
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className='sm:max-w-md'>
+                            <DialogHeader>
+                              <DialogTitle>タスクを削除</DialogTitle>
+                              <DialogDescription>
+                                「{task.title}」を削除します。よろしいですか？
+                              </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter className='flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
+                              <DialogClose asChild>
+                                <Button type='button' variant='outline'>
+                                  キャンセル
+                                </Button>
+                              </DialogClose>
+                              <DialogClose asChild>
+                                <Button
+                                  type='button'
+                                  variant='destructive'
+                                  onClick={() => deleteTask(task.id)}
+                                >
+                                  削除する
+                                </Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
                       </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => onEdit(task.id)}
-                      >
-                        編集
-                      </Button>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button size="sm" variant="ghost">
-                            削除
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-md">
-                          <DialogHeader>
-                            <DialogTitle>タスクを削除</DialogTitle>
-                            <DialogDescription>
-                              「{task.title}」を削除します。よろしいですか？
-                            </DialogDescription>
-                          </DialogHeader>
-                          <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                            <DialogClose asChild>
-                              <Button type="button" variant="outline">
-                                キャンセル
-                              </Button>
-                            </DialogClose>
-                            <DialogClose asChild>
-                              <Button
-                                type="button"
-                                variant="destructive"
-                                onClick={() => deleteTask(task.id)}
-                              >
-                                削除する
-                              </Button>
-                            </DialogClose>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
-                    </>
-                  }
-                />
-              );
-            })}
-          </div>
-        ) : null}
-      </CardContent>
-    </Card>
+                    }
+                  />
+                );
+              })}
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
+      <TaskDetailDialog
+        task={detailTask}
+        open={detailOpen}
+        onOpenChange={handleDetailOpenChange}
+        onGoToManage={(taskId) => onEdit(taskId)}
+        actionLabel='編集'
+      />
+    </>
   );
 }
