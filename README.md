@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# みんなのタスク管理
 
-## Getting Started
+## 1. プロジェクト概要
+- ダッシュボード付きのタスク管理アプリです。
+- 課題要件に合わせてフロントエンドのみで実装しています。
+- データ保存は LocalStorage を利用しています。
 
-First, run the development server:
+## 2. 課題要件への対応
+- ダッシュボード
+  - 完了率の表示
+  - カテゴリ別タスク数の表示
+  - 優先度別の未完了タスク数の表示
+- タスク管理機能
+  - タスクの作成 / 編集 / 削除
+  - 優先度設定（高・中・低）
+  - カテゴリ分類
+  - 完了 / 未完了の切り替え
+- タスク一覧
+  - カテゴリによる絞り込み
+  - 完了状態によるフィルタ
+  - タスク名検索
 
+## 3. 追加実装した機能（加点要素）
+- 締切が近いタスク（期限）管理
+- 締切が近いタスク・期限超過タスクの可視化（ダッシュボード）
+- タスク詳細モーダル（閲覧専用）
+- Dialog を用いたタスク追加・編集 UX
+- Toast による操作完了フィードバック
+- カテゴリ別カード背景色による視認性向上
+- ダークモード対応
+- モバイル対応・レスポンシブレイアウト
+- Theme 切り替え時の hydration error 対策
+
+## 4. 技術スタックと選定理由
+- TypeScript: 型安全性を担保し、保守性を高めるため。
+- Next.js（App Router）: 課題指定のフレームワークであり、構成が明確なため。
+- Tailwind CSS: 迅速に一貫した UI を構築できるため。
+- shadcn/ui: コンポーネント品質と拡張性を両立できるため。
+- LocalStorage: バックエンド不要の課題要件に適した保存手段のため。
+
+## 5. 画面構成
+- ダッシュボード画面
+- タスク管理画面
+- タスク一覧画面
+
+## 6. 設計・実装で工夫した点
+- コンポーネント設計と再利用（TaskCard の共通化）
+- ドメインロジックの分離（進捗計算・期限判定）
+- UI の一貫性（Dialog / Toast / Badge の統一）
+- モバイルファーストのレスポンシブ設計
+- Hydration mismatch を防ぐための設計
+- 可読性・保守性を意識した構成
+
+## 7. 開発時間（目安）
+
+| 作業内容 | 時間 |
+|--------|------|
+| プロジェクト初期設定・設計 | 1.5時間 |
+| 基本機能実装（タスク管理） | 3.0時間 |
+| ダッシュボード実装 | 1.5時間 |
+| UI/UX 改善（Dialog / Toast / レスポンシブ） | 2.0時間 |
+| 追加機能実装（期限管理など） | 2.0時間 |
+| デバッグ・調整 | 1.5時間 |
+| README 作成 | 0.5時間 |
+| 合計 | 約12時間 |
+
+## 8. セットアップ & 実行方法
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
+pnpm lint
+pnpm typecheck
+pnpm build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 9. 補足
+- AI ツール（Codex）を生産性支援として活用しました。
+- 要件解釈、設計判断、最終確認は手動で行っています。
+- 今後の改善候補: フィルタ条件の URL 共有、キーボード操作の拡充、エクスポート機能。
