@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { Nav } from '@/components/layout/Nav';
 import { TasksProvider } from '@/components/providers/TasksProvider';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import './globals.css';
 
 const geistSans = Geist({
@@ -26,21 +27,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='ja'>
+    <html lang='ja' suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <TasksProvider>
-          <div className='min-h-screen text-foreground'>
-            <header>
-              <Header />
-              <Nav />
-            </header>
-            <main className='mx-auto w-full max-w-6xl px-6 py-8'>
-              {children}
-            </main>
-          </div>
-        </TasksProvider>
+        <ThemeProvider>
+          <TasksProvider>
+            <div className='min-h-screen text-foreground'>
+              <header>
+                <Header />
+                <Nav />
+              </header>
+              <main className='mx-auto w-full max-w-6xl px-6 py-8'>
+                {children}
+              </main>
+            </div>
+          </TasksProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

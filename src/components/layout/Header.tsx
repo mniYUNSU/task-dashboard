@@ -1,9 +1,20 @@
+"use client";
+
 import Link from "next/link";
+import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 export function Header() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+  const themeLabel = resolvedTheme
+    ? isDark
+      ? "ライトに切替"
+      : "ダークに切替"
+    : "テーマ切替";
+
   return (
     <Card className="rounded-none border-x-0 border-t-0">
       <CardContent className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
@@ -18,9 +29,18 @@ export function Header() {
             <p className="text-lg font-semibold">タスク管理ダッシュボード</p>
           </div>
         </div>
-        <Button asChild size="sm">
-          <Link href="/tasks">タスクを追加</Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setTheme(isDark ? "light" : "dark")}
+          >
+            <span suppressHydrationWarning>{themeLabel}</span>
+          </Button>
+          <Button asChild size="sm">
+            <Link href="/tasks">タスクを追加</Link>
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
