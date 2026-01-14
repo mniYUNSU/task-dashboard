@@ -3,9 +3,8 @@
 import {
   createContext,
   useCallback,
-  useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 
@@ -22,6 +21,7 @@ type TaskInput = {
 
 type TasksContextValue = {
   tasks: Task[];
+  isHydrated: boolean;
   addTask: (input: TaskInput) => void;
   editTask: (id: string, patch: Partial<Omit<Task, "id" | "createdAt">>) => void;
   deleteTask: (id: string) => void;
@@ -36,43 +36,115 @@ type TasksProviderProps = {
   children: ReactNode;
 };
 
-export function TasksProvider({ children }: TasksProviderProps) {
-  const [tasks, setTasks] = useState<Task[]>(() => loadTasks());
+const listeners = new Set<() => void>();
+const emptyTasks: Task[] = [];
+let taskCache: Task[] = emptyTasks;
+let isHydrated = false;
+const hydrationListeners = new Set<() => void>();
 
-  useEffect(() => {
-    saveTasks(tasks);
-  }, [tasks]);
+if (typeof window !== "undefined") {
+  taskCache = loadTasks();
+}
+
+function emitChange() {
+  for (const listener of listeners) {
+    listener();
+  }
+}
+
+function emitHydrationChange() {
+  for (const listener of hydrationListeners) {
+    listener();
+  }
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function subscribeHydration(listener: () => void) {
+  hydrationListeners.add(listener);
+  if (!isHydrated && typeof window !== "undefined") {
+    isHydrated = true;
+    queueMicrotask(emitHydrationChange);
+  }
+  return () => {
+    hydrationListeners.delete(listener);
+  };
+}
+
+function getSnapshot() {
+  return taskCache;
+}
+
+function getServerSnapshot() {
+  return emptyTasks;
+}
+
+function getHydrationSnapshot() {
+  return isHydrated;
+}
+
+function getHydrationServerSnapshot() {
+  return false;
+}
+
+function setTaskCache(next: Task[]) {
+  taskCache = next;
+  saveTasks(next);
+  emitChange();
+}
+
+export function TasksProvider({ children }: TasksProviderProps) {
+  const tasks = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const hydrated = useSyncExternalStore(
+    subscribeHydration,
+    getHydrationSnapshot,
+    getHydrationServerSnapshot
+  );
 
   const addTask = useCallback((input: TaskInput) => {
-    setTasks((prev) => [...prev, createNewTask(input)]);
+    const next = [...getSnapshot(), createNewTask(input)];
+    setTaskCache(next);
   }, []);
 
   const editTask = useCallback(
     (id: string, patch: Partial<Omit<Task, "id" | "createdAt">>) => {
-      setTasks((prev) =>
-        prev.map((task) => (task.id === id ? updateTask(task, patch) : task))
+      const next = getSnapshot().map((task) =>
+        task.id === id ? updateTask(task, patch) : task
       );
+      setTaskCache(next);
     },
     []
   );
 
   const deleteTask = useCallback((id: string) => {
-    setTasks((prev) => prev.filter((task) => task.id !== id));
+    const next = getSnapshot().filter((task) => task.id !== id);
+    setTaskCache(next);
   }, []);
 
   const toggleComplete = useCallback((id: string) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id
-          ? updateTask(task, { isCompleted: !task.isCompleted })
-          : task
-      )
+    const next = getSnapshot().map((task) =>
+      task.id === id
+        ? updateTask(task, { isCompleted: !task.isCompleted })
+        : task
     );
+    setTaskCache(next);
   }, []);
 
   const value = useMemo(
-    () => ({ tasks, addTask, editTask, deleteTask, toggleComplete }),
-    [tasks, addTask, editTask, deleteTask, toggleComplete]
+    () => ({
+      tasks,
+      isHydrated: hydrated,
+      addTask,
+      editTask,
+      deleteTask,
+      toggleComplete,
+    }),
+    [tasks, hydrated, addTask, editTask, deleteTask, toggleComplete]
   );
 
   return (
