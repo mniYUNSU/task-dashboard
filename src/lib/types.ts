@@ -6,6 +6,8 @@ export type Task = {
   category: string;
   priority: Priority;
   isCompleted: boolean;
+  description?: string;
+  dueDate?: number | null;
   createdAt: number;
   updatedAt: number;
 };
@@ -34,6 +36,8 @@ export function createNewTask(input: {
     category: input.category,
     priority: input.priority,
     isCompleted: input.isCompleted ?? false,
+    description: "",
+    dueDate: null,
     createdAt: now,
     updatedAt: now,
   };
