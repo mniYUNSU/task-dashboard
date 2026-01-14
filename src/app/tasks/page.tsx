@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import TasksPageClient from "./page.client";
 
@@ -8,5 +9,11 @@ export const metadata: Metadata = {
 };
 
 export default function TasksPage() {
-  return <TasksPageClient />;
+  return (
+    <Suspense
+      fallback={<div className="text-sm text-muted-foreground">読み込み中...</div>}
+    >
+      <TasksPageClient />
+    </Suspense>
+  );
 }
