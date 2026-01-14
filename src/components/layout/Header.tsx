@@ -27,9 +27,11 @@ export function Header() {
           </div>
           <div>
             <p className='text-xs uppercase tracking-wide text-primary/80'>
-              タスク管理
+              みんなのタスク管理
             </p>
-            <p className='text-lg font-semibold'>タスク管理ダッシュボード</p>
+            <p className='text-lg font-semibold'>
+              みんなのタスク管理ダッシュボード
+            </p>
           </div>
         </div>
         <div className='flex items-center gap-2'>

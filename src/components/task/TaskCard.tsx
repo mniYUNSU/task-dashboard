@@ -72,8 +72,10 @@ export function TaskCard({
   return (
     <div
       className={cn(
-        'w-full rounded-lg border bg-card p-4 shadow-sm',
-        highlighted && 'border-primary/50 bg-brand-soft/40',
+        'w-full rounded-lg border p-4 shadow-sm',
+        categoryColor.cardBg,
+        categoryColor.cardBorder,
+        highlighted && 'border-primary/50 ring-2 ring-primary/20',
         onClick && 'cursor-pointer transition-colors hover:border-primary/40'
       )}
       onClick={onClick}

@@ -144,16 +144,16 @@ export function TaskDetailDialog({
 
             <div className='grid gap-2 text-xs text-muted-foreground sm:grid-cols-2'>
               <div>
-                <span className='font-medium text-foreground'>期限:</span>{' '}
-                {task.dueDate ? formatDateUtc(task.dueDate) : '未設定'}
-              </div>
-              <div>
                 <span className='font-medium text-foreground'>作成日:</span>{' '}
                 {formatDateUtc(task.createdAt)}
               </div>
               <div>
                 <span className='font-medium text-foreground'>更新日:</span>{' '}
                 {formatDateUtc(task.updatedAt)}
+              </div>
+              <div>
+                <span className='font-bold text-foreground'>期限:</span>{' '}
+                {task.dueDate ? formatDateUtc(task.dueDate) : '未設定'}
               </div>
             </div>
           </div>
