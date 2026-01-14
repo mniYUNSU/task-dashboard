@@ -68,7 +68,7 @@
   --border: #f1ddd3;
   --input: #f1ddd3;
   --ring: #f96319;
-  --brand-soft: #fff2ea;
+  --brand-soft: rgb(249, 207, 182);
   --brand-soft-foreground: #7a2a00;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);

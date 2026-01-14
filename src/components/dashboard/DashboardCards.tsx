@@ -155,7 +155,11 @@ export function DashboardCards({ tasks, isHydrated }: DashboardCardsProps) {
               const count = priorityCounts[priority];
               const width = `${Math.round((count / maxPriorityCount) * 100)}%`;
               const badgeVariant =
-                priority === 'high' ? 'default' : 'secondary';
+                priority === 'high'
+                  ? 'default'
+                  : priority === 'medium'
+                  ? 'secondary'
+                  : 'outline';
 
               return (
                 <div key={priority} className='space-y-2'>
