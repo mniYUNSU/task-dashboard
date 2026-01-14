@@ -43,6 +43,7 @@ export function Header() {
                   isDark ? 'ライトテーマに切替' : 'ダークテーマに切替'
                 }
                 onClick={() => setTheme(isDark ? 'light' : 'dark')}
+                className='cursor-pointer'
               >
                 {isDark ? (
                   <Sun className='size-4' />

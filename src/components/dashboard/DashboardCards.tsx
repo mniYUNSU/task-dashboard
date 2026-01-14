@@ -1,8 +1,13 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { TaskDetailDialog } from '@/components/task/TaskDetailDialog';
 import {
   getCompletionRate,
   getCountByCategory,
@@ -34,6 +39,17 @@ type DashboardCardsProps = {
 };
 
 export function DashboardCards({ tasks, isHydrated }: DashboardCardsProps) {
+  const router = useRouter();
+  const [detailTask, setDetailTask] = useState<Task | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+
+  const handleDetailOpenChange = (open: boolean) => {
+    setDetailOpen(open);
+    if (!open) {
+      setDetailTask(null);
+    }
+  };
+
   const completionRate = getCompletionRate(tasks);
   const categoryCounts = getCountByCategory(tasks);
   const priorityCounts = getIncompleteCountByPriority(tasks);
@@ -83,138 +99,167 @@ export function DashboardCards({ tasks, isHydrated }: DashboardCardsProps) {
   const maxPriorityCount = Math.max(1, ...Object.values(priorityCounts));
 
   return (
-    <div className='grid gap-4 lg:grid-cols-3'>
-      <Card className='shadow-sm'>
-        <CardHeader>
-          <CardTitle className='text-base'>完了率</CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-3'>
-          <Progress value={completionRate} />
-          <div className='flex items-center justify-between text-sm'>
-            <span className='text-muted-foreground'>完了タスク</span>
-            <span className='font-semibold text-foreground'>
-              {completionRate}%
-            </span>
-          </div>
-        </CardContent>
-      </Card>
+    <>
+      <div className='grid gap-4 lg:grid-cols-3'>
+        <Card className='shadow-sm'>
+          <CardHeader>
+            <CardTitle className='text-base'>完了率</CardTitle>
+          </CardHeader>
+          <CardContent className='space-y-3'>
+            <Progress value={completionRate} />
+            <div className='flex items-center justify-between text-sm'>
+              <span className='text-muted-foreground'>完了タスク</span>
+              <span className='font-semibold text-foreground'>
+                {completionRate}%
+              </span>
+            </div>
+          </CardContent>
+        </Card>
 
-      <Card className='shadow-sm'>
-        <CardHeader>
-          <CardTitle className='text-base'>カテゴリ別タスク数</CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-3'>
-          {defaultCategories.map((category) => {
-            const count = categoryCounts[category] ?? 0;
-            const width = `${Math.round((count / maxCategoryCount) * 100)}%`;
+        <Card className='shadow-sm'>
+          <CardHeader>
+            <CardTitle className='text-base'>カテゴリ別タスク数</CardTitle>
+          </CardHeader>
+          <CardContent className='space-y-3'>
+            {defaultCategories.map((category) => {
+              const count = categoryCounts[category] ?? 0;
+              const width = `${Math.round((count / maxCategoryCount) * 100)}%`;
 
-            return (
-              <div key={category} className='space-y-2'>
-                <div className='flex items-center justify-between text-sm'>
-                  <span className='text-muted-foreground'>
-                    {categoryLabels[category] ?? category}
-                  </span>
-                  <span className='font-semibold text-foreground'>{count}</span>
-                </div>
-                <div className='h-2 rounded-full bg-muted'>
-                  <div
-                    className='h-full rounded-full bg-primary/70'
-                    style={{ width }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      <Card className='shadow-sm'>
-        <CardHeader>
-          <CardTitle className='text-base'>優先度別の未完了</CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-3'>
-          {(
-            Object.keys(priorityCounts) as Array<keyof typeof priorityCounts>
-          ).map((priority) => {
-            const count = priorityCounts[priority];
-            const width = `${Math.round((count / maxPriorityCount) * 100)}%`;
-            const badgeVariant = priority === 'high' ? 'default' : 'secondary';
-
-            return (
-              <div key={priority} className='space-y-2'>
-                <div className='flex items-center justify-between text-sm'>
-                  <div className='flex items-center gap-2'>
-                    <Badge variant={badgeVariant}>
-                      {priorityLabels[priority]}
-                    </Badge>
-                    <span className='text-muted-foreground'>未完了</span>
+              return (
+                <div key={category} className='space-y-2'>
+                  <div className='flex items-center justify-between text-sm'>
+                    <span className='text-muted-foreground'>
+                      {categoryLabels[category] ?? category}
+                    </span>
+                    <span className='font-semibold text-foreground'>
+                      {count}
+                    </span>
                   </div>
-                  <span className='font-semibold text-foreground'>{count}</span>
+                  <div className='h-2 rounded-full bg-muted'>
+                    <div
+                      className='h-full rounded-full bg-primary/70'
+                      style={{ width }}
+                    />
+                  </div>
                 </div>
-                <div className='h-2 rounded-full bg-muted'>
-                  <div
-                    className='h-full rounded-full bg-primary/60'
-                    style={{ width }}
-                  />
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        <Card className='shadow-sm'>
+          <CardHeader>
+            <CardTitle className='text-base'>優先度別の未完了</CardTitle>
+          </CardHeader>
+          <CardContent className='space-y-3'>
+            {(
+              Object.keys(priorityCounts) as Array<keyof typeof priorityCounts>
+            ).map((priority) => {
+              const count = priorityCounts[priority];
+              const width = `${Math.round((count / maxPriorityCount) * 100)}%`;
+              const badgeVariant =
+                priority === 'high' ? 'default' : 'secondary';
+
+              return (
+                <div key={priority} className='space-y-2'>
+                  <div className='flex items-center justify-between text-sm'>
+                    <div className='flex items-center gap-2'>
+                      <Badge variant={badgeVariant}>
+                        {priorityLabels[priority]}
+                      </Badge>
+                      <span className='text-muted-foreground'>未完了</span>
+                    </div>
+                    <span className='font-semibold text-foreground'>
+                      {count}
+                    </span>
+                  </div>
+                  <div className='h-2 rounded-full bg-muted'>
+                    <div
+                      className='h-full rounded-full bg-primary/60'
+                      style={{ width }}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
+              );
+            })}
+          </CardContent>
+        </Card>
 
-      <Card className='shadow-sm lg:col-span-3'>
-        <CardHeader>
-          <div className='flex flex-wrap items-center justify-between gap-2'>
-            <CardTitle className='text-base'>締切が近いタスク</CardTitle>
-            <Link
-              className='text-xs font-medium text-primary hover:underline'
-              href='/list'
-            >
-              一覧で確認
-            </Link>
-          </div>
-        </CardHeader>
-        <CardContent className='space-y-3'>
-          {dueSoonTasks.length === 0 && overdueTasks.length === 0 ? (
-            <p className='text-sm text-muted-foreground'>
-              期限が近いタスクはありません。
-            </p>
-          ) : null}
-
-          {overdueTasks.map((task) => (
-            <div
-              key={task.id}
-              className='flex items-center justify-between rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm'
-            >
-              <span className='font-medium text-foreground'>{task.title}</span>
-              <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-                <span>
-                  {task.dueDate ? formatDateUtc(task.dueDate) : '期限未設定'}
-                </span>
-                <Badge className='bg-destructive text-white'>期限超過</Badge>
-              </div>
+        <Card className='shadow-sm lg:col-span-3'>
+          <CardHeader>
+            <div className='flex flex-wrap items-center justify-between gap-2'>
+              <CardTitle className='text-base'>締切が近いタスク</CardTitle>
+              <Link
+                className='text-xs font-medium text-primary hover:underline'
+                href='/list'
+              >
+                一覧で確認
+              </Link>
             </div>
-          ))}
+          </CardHeader>
+          <CardContent className='space-y-3'>
+            {dueSoonTasks.length === 0 && overdueTasks.length === 0 ? (
+              <p className='text-sm text-muted-foreground'>
+                期限が近いタスクはありません。
+              </p>
+            ) : null}
 
-          {dueSoonTasks.map((task) => (
-            <div
-              key={task.id}
-              className='flex items-center justify-between rounded-lg border border-border px-3 py-2 text-sm'
-            >
-              <span className='font-medium text-foreground'>{task.title}</span>
-              <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-                <span>
-                  {task.dueDate ? formatDateUtc(task.dueDate) : '期限未設定'}
+            {overdueTasks.map((task) => (
+              <button
+                key={task.id}
+                type='button'
+                className='flex w-full items-center justify-between rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-left text-sm transition-colors hover:border-destructive/60 cursor-pointer'
+                onClick={() => {
+                  setDetailTask(task);
+                  setDetailOpen(true);
+                }}
+              >
+                <span className='font-medium text-foreground line-clamp-1'>
+                  {task.title}
                 </span>
-                <Badge className='bg-brand-soft text-brand-soft-foreground'>
-                  期限間近
-                </Badge>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-    </div>
+                <div className='flex shrink-0 items-center gap-2 text-xs text-muted-foreground'>
+                  <span>
+                    {task.dueDate ? formatDateUtc(task.dueDate) : '期限未設定'}
+                  </span>
+                  <Badge className='bg-destructive text-white'>期限超過</Badge>
+                </div>
+              </button>
+            ))}
+
+            {dueSoonTasks.map((task) => (
+              <button
+                key={task.id}
+                type='button'
+                className='flex w-full items-center justify-between rounded-lg border border-border px-3 py-2 text-left text-sm transition-colors hover:border-primary/40 cursor-pointer'
+                onClick={() => {
+                  setDetailTask(task);
+                  setDetailOpen(true);
+                }}
+              >
+                <span className='font-medium text-foreground line-clamp-1'>
+                  {task.title}
+                </span>
+                <div className='flex shrink-0 items-center gap-2 text-xs text-muted-foreground'>
+                  <span>
+                    {task.dueDate ? formatDateUtc(task.dueDate) : '期限未設定'}
+                  </span>
+                  <Badge className='bg-brand-soft text-brand-soft-foreground'>
+                    期限間近
+                  </Badge>
+                </div>
+              </button>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+      <TaskDetailDialog
+        task={detailTask}
+        open={detailOpen}
+        onOpenChange={handleDetailOpenChange}
+        onGoToManage={(taskId) =>
+          router.push(`/tasks?focus=${encodeURIComponent(taskId)}`)
+        }
+      />
+    </>
   );
 }
