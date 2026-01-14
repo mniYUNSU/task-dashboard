@@ -196,22 +196,68 @@ export function getCompletionRateByPriority(
   };
 }
 
-const categoryPalette = [
+type CategoryColorTokens = {
+  cardBg: string;
+  cardBorder: string;
+  badgeBg: string;
+  badgeText: string;
+  accent: string;
+};
+
+export type CategoryColor = {
+  bg: string;
+  border: string;
+  text: string;
+  cardBg: string;
+  cardBorder: string;
+  badgeBg: string;
+  badgeText: string;
+  accent: string;
+};
+
+const categoryPalette: CategoryColorTokens[] = [
   {
-    bg: "bg-brand-soft/70",
-    border: "border-brand-soft/60",
-    text: "text-brand-soft-foreground",
+    cardBg: "bg-orange-50/80",
+    cardBorder: "border-orange-200/80",
+    badgeBg: "bg-orange-100",
+    badgeText: "text-orange-900",
+    accent: "text-orange-700",
   },
-  { bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-800" },
-  { bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-800" },
   {
-    bg: "bg-emerald-50",
-    border: "border-emerald-200",
-    text: "text-emerald-800",
+    cardBg: "bg-amber-50/80",
+    cardBorder: "border-amber-200/80",
+    badgeBg: "bg-amber-100",
+    badgeText: "text-amber-900",
+    accent: "text-amber-700",
   },
-  { bg: "bg-sky-50", border: "border-sky-200", text: "text-sky-800" },
-  { bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-800" },
-  { bg: "bg-slate-50", border: "border-slate-200", text: "text-slate-700" },
+  {
+    cardBg: "bg-emerald-50/80",
+    cardBorder: "border-emerald-200/80",
+    badgeBg: "bg-emerald-100",
+    badgeText: "text-emerald-900",
+    accent: "text-emerald-700",
+  },
+  {
+    cardBg: "bg-sky-50/80",
+    cardBorder: "border-sky-200/80",
+    badgeBg: "bg-sky-100",
+    badgeText: "text-sky-900",
+    accent: "text-sky-700",
+  },
+  {
+    cardBg: "bg-rose-50/80",
+    cardBorder: "border-rose-200/80",
+    badgeBg: "bg-rose-100",
+    badgeText: "text-rose-900",
+    accent: "text-rose-700",
+  },
+  {
+    cardBg: "bg-slate-50",
+    cardBorder: "border-slate-200",
+    badgeBg: "bg-slate-100",
+    badgeText: "text-slate-800",
+    accent: "text-slate-700",
+  },
 ];
 
 function hashCategory(value: string): number {
@@ -222,12 +268,66 @@ function hashCategory(value: string): number {
   return hash >>> 0;
 }
 
-// Example: getCategoryColor("Work") => { bg: "...", border: "...", text: "..." }
-export function getCategoryColor(category: string): {
-  bg: string;
-  border: string;
-  text: string;
-} {
+function buildCategoryColor(tokens: CategoryColorTokens): CategoryColor {
+  return {
+    bg: tokens.badgeBg,
+    border: tokens.cardBorder,
+    text: tokens.badgeText,
+    ...tokens,
+  };
+}
+
+const categoryOverrides: Record<string, CategoryColor> = {
+  Work: buildCategoryColor({
+    cardBg: "bg-orange-50/80",
+    cardBorder: "border-orange-200/80",
+    badgeBg: "bg-orange-100",
+    badgeText: "text-orange-900",
+    accent: "text-orange-700",
+  }),
+  仕事: buildCategoryColor({
+    cardBg: "bg-orange-50/80",
+    cardBorder: "border-orange-200/80",
+    badgeBg: "bg-orange-100",
+    badgeText: "text-orange-900",
+    accent: "text-orange-700",
+  }),
+  Personal: buildCategoryColor({
+    cardBg: "bg-sky-50/80",
+    cardBorder: "border-sky-200/80",
+    badgeBg: "bg-sky-100",
+    badgeText: "text-sky-900",
+    accent: "text-sky-700",
+  }),
+  個人: buildCategoryColor({
+    cardBg: "bg-sky-50/80",
+    cardBorder: "border-sky-200/80",
+    badgeBg: "bg-sky-100",
+    badgeText: "text-sky-900",
+    accent: "text-sky-700",
+  }),
+  Study: buildCategoryColor({
+    cardBg: "bg-emerald-50/80",
+    cardBorder: "border-emerald-200/80",
+    badgeBg: "bg-emerald-100",
+    badgeText: "text-emerald-900",
+    accent: "text-emerald-700",
+  }),
+  勉強: buildCategoryColor({
+    cardBg: "bg-emerald-50/80",
+    cardBorder: "border-emerald-200/80",
+    badgeBg: "bg-emerald-100",
+    badgeText: "text-emerald-900",
+    accent: "text-emerald-700",
+  }),
+};
+
+// Example: getCategoryColor("Work") => { bg, border, text, cardBg, cardBorder, badgeBg, badgeText, accent }
+export function getCategoryColor(category: string): CategoryColor {
+  const override = categoryOverrides[category];
+  if (override) {
+    return override;
+  }
   const index = hashCategory(category) % categoryPalette.length;
-  return categoryPalette[index];
+  return buildCategoryColor(categoryPalette[index]);
 }
